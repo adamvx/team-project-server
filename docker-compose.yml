@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  team-project-backend:
+    image: team-project-backend
+    build: .
+    container_name: team-project-backend
+    restart: unless-stopped
+    expose:
+      - 8080
+    network_mode: bridge
+    environment:
+      - VIRTUAL_HOST=teleport.adamvician.sk, www.teleport.adamvician.sk
+      - LETSENCRYPT_HOST=teleport.adamvician.sk, www.teleport.adamvician.sk
+      - LETSENCRYPT_EMAIL=adamvician@gmail.com
