@@ -2,24 +2,26 @@ import WebSocket, { WebSocketServer } from "ws";
 
 //Web socket server, basic
 const wss = new WebSocketServer({
-    port: 8080
+  port: 8080
 });
 
 wss.on('connection', (ws) => {
-    console.log('New client connected!');
+  console.log('New client connected!');
 
-    ws.on('message', (data) => {
-        console.log(`Client has send us: ${data}`);
+  ws.on('message', (data) => onClinetMessage(ws, data));
 
-        wss.clients.forEach((client) => {
-            if (client != ws && client.readyState === WebSocket.OPEN) {
-                client.send(data, { binary: true });
-            }
-        });
-    });
-
-    ws.on('close', () => {
-        console.log('Client has disconnected!');
-    });
+  ws.on('close', () => {
+    console.log('Client has disconnected!');
+  });
 });
+
+const onClinetMessage = (ws: WebSocket, data: WebSocket.RawData) => {
+  console.log(`Client has send us: ${data}`);
+
+  wss.clients.forEach((client) => {
+    if (client !== ws && client.readyState === WebSocket.OPEN) {
+      client.send(data, { binary: true });
+    }
+  });
+}
 
