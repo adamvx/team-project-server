@@ -1,0 +1,1 @@
+const serverHost = process.env.SERVER_HOST || "ws://localhost:8080";

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { WebSocket } from 'ws';
 
-const ws = new WebSocket("ws://localhost:8080");
+const ws = new WebSocket(serverHost);
 let i = 0;
 
 ws.on("open", () => {
