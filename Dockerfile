@@ -4,9 +4,9 @@ WORKDIR /usr/src/app
 
 COPY ./drc ./drc
 
-COPY ./tsconfig.json .
+COPY ./tsconfig.json ./tsconfig.json
 
-COPY ./package*.json .
+COPY ./package*.json ./
 
 RUN npm i
 
