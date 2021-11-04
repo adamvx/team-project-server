@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { WebSocket } from 'ws';
 
-const ws = new WebSocket(serverHost);
+const ws = new WebSocket("wss://teleport.adamvician.sk");
 let i = 0;
 
 ws.on("open", () => {
