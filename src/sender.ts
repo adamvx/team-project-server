@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { WebSocket } from 'ws';
 
-const ws = new WebSocket("wss://teleport.adamvician.sk");
+const ws = new WebSocket("ws://161.35.216.12:5677");
 let i = 0;
 
 ws.on("open", () => {
@@ -14,5 +14,5 @@ ws.on("open", () => {
       i = 0;
     }
     console.log(i)
-  }, 33);
+  }, 41);
 });

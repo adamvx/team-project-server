@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { WebSocket } from 'ws';
 
-const ws = new WebSocket("wss://teleport.adamvician.sk");
+const ws = new WebSocket("ws://161.35.216.12:5677");
 let i = 0;
 let t0 = Date.now()
 let sum = 0;
