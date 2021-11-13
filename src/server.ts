@@ -1,39 +1,42 @@
 import express from 'express';
 import { createServer } from 'http';
-import { parse } from 'url';
 import WebSocket, { WebSocketServer } from 'ws';
-import crypto from 'crypto'
+import { generateId } from './utils';
 
 const app = express();
 const server = createServer(app);
 
-const rooms: { key: string, socket: WebSocketServer }[] = [];
+let rooms: { key: string, socket: WebSocketServer }[] = [];
 
 app.get('/create', (req, res) => {
 
-  const id = crypto.randomBytes(12).toString('hex');
+  const id = generateId();
   const wss = new WebSocketServer({ noServer: true });
 
   wss.on('connection', (ws) => {
-    console.log('New client connected!');
+    console.log(`New client connected on server with id: ${id}!`);
 
     ws.on('message', (data) => onClinetMessage(wss, ws, data));
 
     ws.on('close', () => {
-      console.log('Client has disconnected!');
+      console.log(`Client has disconnected on server with id: ${id}!`);
+      if (wss.clients.size === 0) {
+        console.log(`All client has disconnected terminating server with id: ${id}!`);
+        wss.close()
+        rooms = rooms.filter(x => x.key !== id)
+      }
     });
   });
 
   rooms.push({ key: id, socket: wss });
-  res.send(id);
+  res.json({ id });
 
 })
 
 server.on('upgrade', function upgrade(request, socket, head) {
-  const { pathname } = parse(request.url ?? '');
 
   const room = rooms.find((room) => {
-    if (room.key === pathname) {
+    if (room.key === request.url?.replace('/', '')) {
       return room;
     }
   })
@@ -56,4 +59,6 @@ const onClinetMessage = (wss: WebSocketServer, ws: WebSocket, data: WebSocket.Ra
   });
 }
 
-server.listen(5677);
+server.listen(5677, () => {
+  console.log('🚀 Server is running!')
+});
