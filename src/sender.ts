@@ -5,7 +5,7 @@ import { WebSocket } from "ws";
 	const id = "0000-0000-0000";
 	console.log("Room id:", id);
 
-	const ws = new WebSocket(`ws://161.35.216.12:5677/${id}`);
+	const ws = new WebSocket(`ws://38.242.238.119:5677/${id}`);
 	let i = 0;
 
 	ws.on("open", () => {

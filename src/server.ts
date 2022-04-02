@@ -3,15 +3,24 @@ import { createServer } from "http";
 import WebSocket, { WebSocketServer } from "ws";
 import { generateId } from "./utils";
 
+type TRoom = {
+	key: string;
+	socket: WebSocketServer;
+};
+
 const app = express();
 const server = createServer(app);
 
-let rooms: { key: string; socket: WebSocketServer }[] = [
-	{ key: "0000-0000-0000", socket: new WebSocketServer({ noServer: true }) },
-];
+let rooms: TRoom[] = [createRoom("0000-0000-0000")];
 
 app.get("/create", (req, res) => {
-	const id = generateId();
+	const room = createRoom();
+	rooms.push(room);
+	res.json({ id: room.key });
+});
+
+function createRoom(defaultId?: string): TRoom {
+	const id = defaultId || generateId();
 	const wss = new WebSocketServer({ noServer: true });
 
 	wss.on("connection", (ws) => {
@@ -21,19 +30,18 @@ app.get("/create", (req, res) => {
 
 		ws.on("close", () => {
 			console.log(`Client has disconnected on server with id: ${id}!`);
-			if (wss.clients.size === 0) {
-				console.log(
-					`All client has disconnected terminating server with id: ${id}!`
-				);
-				wss.close();
-				// rooms = rooms.filter(x => x.key !== id)
-			}
+			// TOOD: Termination and deletion of unused server will be added later
+			// if (wss.clients.size === 0) {
+			// 	console.log(
+			// 		`All client has disconnected terminating server with id: ${id}!`
+			// 	);
+			// 	wss.close();
+			// 	rooms = rooms.filter(x => x.key !== id)
+			// }
 		});
 	});
-
-	rooms.push({ key: id, socket: wss });
-	res.json({ id });
-});
+	return { key: id, socket: wss };
+}
 
 server.on("upgrade", function upgrade(request, socket, head) {
 	const room = rooms.find((room) => {
